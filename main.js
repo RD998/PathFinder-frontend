@@ -300,3 +300,82 @@ if (Inp) {
 function Start_Booking(){
     window.location.href="Preferences.html";
 }
+const waitlistToggleBtn = document.getElementById('waitlist-toggle-btn');
+const waitlistContainer = document.getElementById('waitlist-container');
+const waitlistSlotsList = document.getElementById('waitlist-slots-list');
+
+if (waitlistToggleBtn) {
+    waitlistToggleBtn.addEventListener('click', () => {
+        const isHidden = waitlistContainer.style.display === 'none';
+        waitlistContainer.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) Show_Booked_Slots();
+    });
+}
+
+async function Show_Booked_Slots() {
+    if (!waitlistSlotsList) return;
+
+    const x = localStorage.getItem("doc_id");
+    const checkedlist = { "doctor_id": x };
+    const queryig = new URLSearchParams(checkedlist).toString();
+
+    const response = await fetch(`https://pathfinder-backend-2u7u.onrender.com/slots/booked?${queryig}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    waitlistSlotsList.innerHTML = '';
+
+    if (response.status === 404) {
+        waitlistSlotsList.innerHTML = '<p style="grid-column: 1 / -1; text-align: center;">No booked slots to wait for.</p>';
+        return;
+    }
+
+    if (response.ok) {
+        const bookedSlotsData = await response.json();
+        const filteredData = bookedSlotsData.filter(slot => slot.start_time.startsWith(targetDateStr));
+
+        if (filteredData.length === 0) {
+            waitlistSlotsList.innerHTML = '<p style="grid-column: 1 / -1; text-align: center;">No booked slots to wait for.</p>';
+            return;
+        }
+
+        filteredData.forEach(slot => {
+            const timeString = new Date(slot.start_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            const btn = document.createElement('button');
+            btn.className = 'slot-btn';
+            btn.innerText = timeString;
+            btn.onclick = () => Join_Waitlist(slot.id, btn);
+
+            waitlistSlotsList.appendChild(btn);
+        });
+    } else {
+        console.log("Failed to load booked slots");
+    }
+}
+
+async function Join_Waitlist(slotId, btnEl) {
+    const user_id = localStorage.getItem("user_id") || 1;
+
+    const response = await fetch(`https://pathfinder-backend-2u7u.onrender.com/waitlist?user_id=${user_id}&slot_id=${slotId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    if (response.ok) {
+        alert("You've been added to the waitlist for this slot!");
+        if (btnEl) {
+            btnEl.disabled = true;
+            btnEl.style.opacity = '0.5';
+            btnEl.innerText += ' (Waiting)';
+        }
+    } else if (response.status === 409) {
+        alert("Someone is already waiting for this slot.");
+    } else {
+        console.log("Failed to join waitlist");
+    }
+}
+function logout(){
+    window.location.href="login.html"
+}
