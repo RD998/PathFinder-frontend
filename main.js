@@ -377,5 +377,8 @@ async function Join_Waitlist(slotId, btnEl) {
     }
 }
 function logout(){
-    window.location.href="login.html"
+    window.location.href="login.html";
+}
+function Dshb(){
+    window.location.href="dashboard.html";
 }
