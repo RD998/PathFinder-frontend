@@ -59,7 +59,7 @@ function Display_Clinics() {
                 <div class="tags">
                     <span class="tag">⭐ ${rating}</span>
                 </div>
-                <p>Bring your idea to life in no time. The prototyping solution for all your needs.</p>
+                <p>"Dedicated to Hope, Healing, and Recovery</p>
                 <center>
                     <a class="btn btn-info" href="https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}" target="_blank">Navigate</a>
                     <a onclick="Book(${id})" class="btn btn-success" target="">Book</a>
