@@ -182,6 +182,14 @@
             <button class="confirm-btn" onclick="Book_Slot()" id="confirm-btn" disabled>Confirm Booking</button>
         </div>
     </main>
+    <div style="margin-top: 20px; text-align: center;">
+    <button id="waitlist-toggle-btn" class="btn btn-info">Don't see a slot you like? Join Waitlist</button>
+</div>
+
+<div id="waitlist-container" style="display: none; margin-top: 15px;">
+    <h3>Booked Slots — Join Waitlist</h3>
+    <div id="waitlist-slots-list" class="slots-grid"></div>
+</div>
 
     <script src="main.js"></script>
     <script>Show_slot();</script>
